@@ -1,6 +1,6 @@
 # AminaPad
 
-A free, whitelabel blog template built with **Astro 5**, **[Pages CMS](https://pagescms.org)**, and **Cloudflare Pages**. Made for writers who want a beautiful blog without the complexity. Every piece of text, branding, and content is editable through a browser-based admin panel. No code editing required.
+A free, whitelabel blog template built with **Astro 5**, **Pages CMS**, and **Cloudflare Pages**. Made for writers who want a beautiful blog without the complexity. Every piece of text, branding, and content is editable through a browser-based admin panel. No code editing required.
 
 ---
 
