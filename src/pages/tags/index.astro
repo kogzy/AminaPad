@@ -1,0 +1,47 @@
+---
+import fs from 'node:fs';
+import yaml from 'js-yaml';
+import Base from '../../layouts/Base.astro';
+
+const settings = yaml.load(fs.readFileSync('src/content/settings.yaml', 'utf8'));
+
+const postFiles = import.meta.glob('../../content/blog/*.md', { eager: true });
+
+var tagCounts = {};
+for (var path of Object.keys(postFiles)) {
+  var mod = postFiles[path];
+  if (mod.frontmatter && !mod.frontmatter.draft && !mod.frontmatter.archived && mod.frontmatter.tags) {
+    for (var tag of mod.frontmatter.tags) {
+      var tagLower = tag.toLowerCase();
+      if (!tagCounts[tagLower]) {
+        tagCounts[tagLower] = { name: tag, count: 0 };
+      }
+      tagCounts[tagLower].count++;
+    }
+  }
+}
+
+var tags = Object.values(tagCounts);
+tags.sort(function(a, b) { return b.count - a.count; });
+---
+<Base title="Tags" description={'Browse posts by topic on ' + settings.site_title}>
+  <div class="page-single">
+    <header class="page-header">
+      <h1>Tags</h1>
+      <p class="subtitle">Browse posts by topic</p>
+    </header>
+
+    {tags.length > 0 ? (
+      <div class="tags-list">
+        {tags.map((tag) => (
+          <a class="tag" href={'/tags/' + tag.name.toLowerCase() + '/'}>
+            {tag.name}
+            <span class="tag-count">({tag.count})</span>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <p>No tags yet.</p>
+    )}
+  </div>
+</Base>

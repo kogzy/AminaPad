@@ -1,0 +1,296 @@
+media:
+  input: public/images/uploads
+  output: /images/uploads
+  categories: [image]
+  rename: true
+
+content:
+  # -------------------------------------------------
+  #  SITE SETTINGS
+  # -------------------------------------------------
+  - name: site_settings
+    label: Site Settings
+    type: file
+    path: src/content/settings.yaml
+    description: Your blog's identity, branding, display options, and author info.
+    fields:
+      # --- Branding ---
+      - name: site_title
+        label: Site Title
+        type: string
+        description: The name of your blog (appears in the header and browser tab).
+      - name: site_tagline
+        label: Site Tagline
+        type: string
+        description: A short tagline shown below your site title.
+      - name: site_description
+        label: Site Description
+        type: text
+        description: Used for SEO - describes your blog to search engines.
+      - name: accent_color
+        label: Accent Color
+        type: string
+        description: "Hex code for your brand color (e.g. #c0392b). Used for links, buttons, and highlights."
+      - name: dark_mode
+        label: Dark Mode
+        type: boolean
+        description: Use a dark color scheme for the entire site.
+      - name: favicon
+        label: Favicon
+        type: image
+        required: false
+        description: Small icon shown in the browser tab. Square image recommended (at least 64x64).
+      # --- Display Options ---
+      - name: show_homepage_image
+        label: Show Homepage Image
+        type: boolean
+        description: Show a circular image above the site title on the homepage.
+      - name: homepage_image
+        label: Homepage Image
+        type: image
+        required: false
+        description: Custom image for the homepage circle. Leave blank to use your author photo.
+      - name: show_social_homepage
+        label: Show Social Links on Homepage
+        type: boolean
+        description: Display your social links below the homepage banner, above posts.
+      - name: show_social_footer
+        label: Show Social Links in Footer
+        type: boolean
+        description: Display your social links in the site footer.
+      - name: show_reading_time
+        label: Show Reading Time
+        type: boolean
+        description: Display estimated reading time on post cards and post pages.
+      - name: show_author_block
+        label: Show Author Block on Posts
+        type: boolean
+        description: Show the author card at the bottom of blog posts.
+      - name: posts_per_page
+        label: Posts Per Page
+        type: number
+        description: How many posts to show on the homepage (3-20).
+      # --- Author & Social ---
+      - name: author_name
+        label: Author Name
+        type: string
+      - name: author_bio
+        label: Author Bio
+        type: text
+        description: A short bio shown in the post author card and about page.
+      - name: author_photo
+        label: Author Photo
+        type: image
+        required: false
+        description: Your profile photo.
+      - name: social_links
+        label: Social Links
+        type: object
+        list: true
+        description: Add your social media profiles. Use any name you want (e.g. Twitter, My Portfolio, Newsletter).
+        fields:
+          - name: platform
+            label: Name
+            type: string
+            description: The label shown on the link (e.g. Twitter, Instagram, My Website).
+          - name: url
+            label: URL
+            type: string
+      - name: footer_text
+        label: Custom Footer Text
+        type: string
+        required: false
+        description: Leave blank to use the default copyright line.
+      # --- Advanced ---
+      - name: site_url
+        label: Site URL (do not change unless switching hosts)
+        type: string
+        required: false
+        description: "Your Cloudflare Pages URL (e.g. https://mysite.pages.dev). Only change this if you switch hosting or add a custom domain. Used for RSS feed and sitemap links."
+
+  # -------------------------------------------------
+  #  NAVIGATION - togglable pages and custom links
+  # -------------------------------------------------
+  - name: navigation
+    label: Navigation & Pages
+    type: file
+    path: src/content/navigation.yaml
+    description: Show or hide pages in your navigation menu.
+    fields:
+      - name: show_about
+        label: Show About Page
+        type: boolean
+        description: Toggle the About page link in your navigation.
+      - name: show_contact
+        label: Show Contact Page
+        type: boolean
+        description: Toggle the Contact page link in your navigation.
+      - name: show_tags
+        label: Show Tags Page
+        type: boolean
+        description: Toggle the Tags archive link in your navigation.
+      - name: custom_links
+        label: Custom Navigation Links
+        type: object
+        list: true
+        description: Add external links to your navigation (newsletter, portfolio, etc.).
+        fields:
+          - name: text
+            label: Link Text
+            type: string
+          - name: url
+            label: URL
+            type: string
+          - name: new_tab
+            label: Open in New Tab
+            type: boolean
+
+  # -------------------------------------------------
+  #  BLOG POSTS
+  # -------------------------------------------------
+  - name: blog
+    label: Blog Posts
+    type: collection
+    path: src/content/blog
+    filename: "{fields.title}.md"
+    view:
+      fields: [title, date, tags, featured, draft, archived]
+      primary: title
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+      search: [title, description, tags]
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: date
+        label: Publish Date
+        type: date
+        required: true
+        options:
+          format: "yyyy-MM-dd"
+      - name: description
+        label: Description / Excerpt
+        type: text
+        description: A short summary shown in post previews and search results (1-2 sentences).
+      - name: featured_image
+        label: Featured Image
+        type: image
+        required: false
+        description: The main image for this post - shown at the top and in previews.
+      - name: featured_image_alt
+        label: Featured Image Alt Text
+        type: string
+        required: false
+        description: Describe the image for accessibility and SEO.
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+        description: Add tags to categorize this post.
+      - name: featured
+        label: Featured Post
+        type: boolean
+        description: Pin this post to the top of your homepage.
+      - name: draft
+        label: Draft
+        type: boolean
+        description: Drafts are saved but not published to your site.
+      - name: archived
+        label: Archived
+        type: boolean
+        description: Archived posts are hidden from all listings but remain in your repo.
+      - name: seo_title
+        label: SEO Title
+        type: string
+        required: false
+        description: Custom title for search engines (leave blank to use the post title).
+      - name: seo_description
+        label: SEO Description
+        type: text
+        required: false
+        description: Custom description for search engines (leave blank to use the excerpt).
+      - name: og_image
+        label: Social Share Image
+        type: image
+        required: false
+        description: Custom image for social media shares (leave blank to use the featured image).
+      - name: body
+        label: Body
+        type: rich-text
+        options:
+          format: markdown
+          rename: true
+        description: Write your post here. Use the toolbar to format text and insert images.
+
+  # -------------------------------------------------
+  #  PAGES - About & Contact
+  # -------------------------------------------------
+  - name: about_page
+    label: About Page
+    type: file
+    path: src/content/pages/about.md
+    description: The content of your About page.
+    fields:
+      - name: title
+        label: Page Title
+        type: string
+      - name: subtitle
+        label: Subtitle
+        type: string
+        required: false
+        description: A short line below the page title.
+      - name: seo_title
+        label: SEO Title
+        type: string
+        required: false
+      - name: seo_description
+        label: SEO Description
+        type: text
+        required: false
+      - name: body
+        label: Body
+        type: rich-text
+        options:
+          format: markdown
+          rename: true
+
+  - name: contact_page
+    label: Contact Page
+    type: file
+    path: src/content/pages/contact.md
+    description: The content of your Contact page.
+    fields:
+      - name: title
+        label: Page Title
+        type: string
+      - name: subtitle
+        label: Subtitle
+        type: string
+        required: false
+      - name: email
+        label: Email Address
+        type: string
+        required: false
+        description: Your public email address.
+      - name: seo_title
+        label: SEO Title
+        type: string
+        required: false
+      - name: seo_description
+        label: SEO Description
+        type: text
+        required: false
+      - name: body
+        label: Body
+        type: rich-text
+        options:
+          format: markdown
+          rename: true
+
+settings:
+  content:
+    merge: false

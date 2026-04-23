@@ -1,0 +1,36 @@
+---
+import fs from 'node:fs';
+import yaml from 'js-yaml';
+import Base from '../layouts/Base.astro';
+
+const settings = yaml.load(fs.readFileSync('src/content/settings.yaml', 'utf8'));
+const nav = yaml.load(fs.readFileSync('src/content/navigation.yaml', 'utf8'));
+
+const contactMod = await import('../content/pages/contact.md');
+const ContactContent = contactMod.Content;
+const pageFm = contactMod.frontmatter || {};
+
+var seoTitle = pageFm.seo_title || pageFm.title || 'Contact';
+var seoDesc = pageFm.seo_description || settings.site_description;
+var email = pageFm.email || '';
+---
+<Base title={seoTitle} description={seoDesc}>
+  <div class="page-single">
+    <header class="page-header">
+      <h1>{pageFm.title || 'Contact'}</h1>
+      {pageFm.subtitle && (
+        <p class="subtitle">{pageFm.subtitle}</p>
+      )}
+    </header>
+
+    {email && (
+      <div style="text-align:center;">
+        <a class="contact-email-link" href={'mailto:' + email}>{email}</a>
+      </div>
+    )}
+
+    <div class="page-body">
+      <ContactContent />
+    </div>
+  </div>
+</Base>

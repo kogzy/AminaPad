@@ -1,0 +1,103 @@
+---
+import fs from 'node:fs';
+import yaml from 'js-yaml';
+import Base from '../../layouts/Base.astro';
+
+const settings = yaml.load(fs.readFileSync('src/content/settings.yaml', 'utf8'));
+
+export async function getStaticPaths() {
+  const postFiles = import.meta.glob('../../content/blog/*.md', { eager: true });
+
+  function getSlugFromPath(filePath) {
+    var parts = filePath.split('/');
+    var fileName = parts[parts.length - 1];
+    return fileName.replace('.md', '');
+  }
+
+  function getReadingTime(content) {
+    var words = content ? content.split(/\s+/).length : 0;
+    var minutes = Math.ceil(words / 200);
+    return minutes + ' min read';
+  }
+
+  var tagMap = {};
+  for (var path of Object.keys(postFiles)) {
+    var mod = postFiles[path];
+    if (mod.frontmatter && !mod.frontmatter.draft && !mod.frontmatter.archived && mod.frontmatter.tags) {
+      for (var tag of mod.frontmatter.tags) {
+        var tagLower = tag.toLowerCase();
+        if (!tagMap[tagLower]) {
+          tagMap[tagLower] = { name: tag, posts: [] };
+        }
+        tagMap[tagLower].posts.push({
+          frontmatter: mod.frontmatter,
+          slug: getSlugFromPath(path),
+          readingTime: getReadingTime(mod.rawContent ? mod.rawContent() : ''),
+        });
+      }
+    }
+  }
+
+  return Object.keys(tagMap).map(function(tagKey) {
+    var tagData = tagMap[tagKey];
+    tagData.posts.sort(function(a, b) {
+      return new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime();
+    });
+    return {
+      params: { tag: tagKey },
+      props: { tagName: tagData.name, posts: tagData.posts },
+    };
+  });
+}
+
+const { tagName, posts } = Astro.props;
+
+function formatDate(dateStr) {
+  var d = new Date(dateStr);
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+var showReadingTime = settings.show_reading_time !== false;
+---
+<Base title={'Posts tagged "' + tagName + '"'} description={'All posts tagged with ' + tagName}>
+  <div class="page-single" style="max-width: var(--max-width);">
+    <header class="page-header">
+      <h1>{'Tagged: ' + tagName}</h1>
+      <p class="subtitle">{posts.length + ' post' + (posts.length === 1 ? '' : 's')}</p>
+    </header>
+
+    <div class="posts-grid">
+      {posts.map((post) => (
+        <article class="post-card">
+          {post.frontmatter.featured_image && (
+            <img
+              class="post-card-image"
+              src={post.frontmatter.featured_image}
+              alt={post.frontmatter.featured_image_alt || post.frontmatter.title}
+              loading="lazy"
+            />
+          )}
+          <div class="post-card-body">
+            <div class="post-card-meta">
+              <time>{formatDate(post.frontmatter.date)}</time>
+              {showReadingTime && (
+                <span class="meta-dot">&middot;</span>
+              )}
+              {showReadingTime && (
+                <span class="reading-time">{post.readingTime}</span>
+              )}
+            </div>
+            <h2><a href={'/blog/' + post.slug + '/'}>{post.frontmatter.title}</a></h2>
+            <p class="excerpt">{post.frontmatter.description}</p>
+            {post.frontmatter.tags && post.frontmatter.tags.length > 0 && (
+              <div class="post-card-tags">
+                {post.frontmatter.tags.map((t) => (
+                  <a class="tag" href={'/tags/' + t.toLowerCase() + '/'}>{t}</a>
+                ))}
+              </div>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</Base>

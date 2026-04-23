@@ -1,0 +1,40 @@
+---
+import fs from 'node:fs';
+import yaml from 'js-yaml';
+import Base from '../layouts/Base.astro';
+
+const settings = yaml.load(fs.readFileSync('src/content/settings.yaml', 'utf8'));
+const nav = yaml.load(fs.readFileSync('src/content/navigation.yaml', 'utf8'));
+
+const aboutMod = await import('../content/pages/about.md');
+const AboutContent = aboutMod.Content;
+const pageFm = aboutMod.frontmatter || {};
+
+var seoTitle = pageFm.seo_title || pageFm.title || 'About';
+var seoDesc = pageFm.seo_description || settings.site_description;
+---
+<Base title={seoTitle} description={seoDesc}>
+  <div class="page-single">
+    <header class="page-header">
+      <h1>{pageFm.title || 'About'}</h1>
+      {pageFm.subtitle && (
+        <p class="subtitle">{pageFm.subtitle}</p>
+      )}
+    </header>
+
+    {settings.author_photo && (
+      <div style="text-align:center; margin-bottom:2rem;">
+        <img
+          class="author-photo"
+          src={settings.author_photo}
+          alt={settings.author_name}
+          style="width:120px; height:120px; margin:0 auto;"
+        />
+      </div>
+    )}
+
+    <div class="page-body">
+      <AboutContent />
+    </div>
+  </div>
+</Base>

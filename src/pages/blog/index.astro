@@ -1,0 +1,94 @@
+---
+import fs from 'node:fs';
+import yaml from 'js-yaml';
+import Base from '../../layouts/Base.astro';
+
+const settings = yaml.load(fs.readFileSync('src/content/settings.yaml', 'utf8'));
+
+const postFiles = import.meta.glob('../../content/blog/*.md', { eager: true });
+
+function getReadingTime(content) {
+  var words = content ? content.split(/\s+/).length : 0;
+  var minutes = Math.ceil(words / 200);
+  return minutes + ' min read';
+}
+
+function getSlugFromPath(filePath) {
+  var parts = filePath.split('/');
+  var fileName = parts[parts.length - 1];
+  return fileName.replace('.md', '');
+}
+
+var allPosts = [];
+for (var path of Object.keys(postFiles)) {
+  var mod = postFiles[path];
+  if (mod.frontmatter && !mod.frontmatter.draft && !mod.frontmatter.archived) {
+    allPosts.push({
+      frontmatter: mod.frontmatter,
+      slug: getSlugFromPath(path),
+      readingTime: getReadingTime(mod.rawContent ? mod.rawContent() : ''),
+    });
+  }
+}
+
+allPosts.sort(function(a, b) {
+  return new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime();
+});
+
+function formatDate(dateStr) {
+  var d = new Date(dateStr);
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+var showReadingTime = settings.show_reading_time !== false;
+---
+<Base title="All Posts" description={'All blog posts from ' + settings.site_title}>
+  <section class="page-header">
+    <h1>All Posts</h1>
+    <p class="subtitle">{allPosts.length + ' post' + (allPosts.length === 1 ? '' : 's')}</p>
+  </section>
+
+  {allPosts.length > 0 ? (
+    <div class="posts-grid">
+      {allPosts.map((post) => (
+        <article class="post-card">
+          {post.frontmatter.featured_image && (
+            <img
+              class="post-card-image"
+              src={post.frontmatter.featured_image}
+              alt={post.frontmatter.featured_image_alt || post.frontmatter.title}
+              loading="lazy"
+            />
+          )}
+          <div class="post-card-body">
+            <div class="post-card-meta">
+              {post.frontmatter.featured && (
+                <span class="featured-badge">Featured</span>
+              )}
+              {post.frontmatter.featured && (
+                <span class="meta-dot">&middot;</span>
+              )}
+              <time>{formatDate(post.frontmatter.date)}</time>
+              {showReadingTime && (
+                <span class="meta-dot">&middot;</span>
+              )}
+              {showReadingTime && (
+                <span class="reading-time">{post.readingTime}</span>
+              )}
+            </div>
+            <h2><a href={'/blog/' + post.slug + '/'}>{post.frontmatter.title}</a></h2>
+            <p class="excerpt">{post.frontmatter.description}</p>
+            {post.frontmatter.tags && post.frontmatter.tags.length > 0 && (
+              <div class="post-card-tags">
+                {post.frontmatter.tags.map((tag) => (
+                  <a class="tag" href={'/tags/' + tag.toLowerCase() + '/'}>{tag}</a>
+                ))}
+              </div>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  ) : (
+    <p>No posts published yet. Check back soon!</p>
+  )}
+</Base>

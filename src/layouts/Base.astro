@@ -1,0 +1,123 @@
+---
+import fs from 'node:fs';
+import yaml from 'js-yaml';
+
+const settings = yaml.load(fs.readFileSync('src/content/settings.yaml', 'utf8'));
+const nav = yaml.load(fs.readFileSync('src/content/navigation.yaml', 'utf8'));
+
+const {
+  title = '',
+  description = '',
+  ogImage = '',
+  canonicalURL = '',
+  pageType = 'website',
+} = Astro.props;
+
+const siteTitle = settings.site_title || 'Blog';
+const siteDescription = settings.site_description || '';
+const accentColor = settings.accent_color || '#c0392b';
+
+const pageTitle = title ? title + ' | ' + siteTitle : siteTitle;
+const pageDescription = description || siteDescription;
+const currentPath = Astro.url.pathname;
+const isDarkMode = settings.dark_mode || false;
+const faviconUrl = settings.favicon || '/favicon.png';
+
+const customLinks = nav.custom_links || [];
+---
+<html lang="en" data-theme={isDarkMode ? 'dark' : 'light'}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{pageTitle}</title>
+  <meta name="description" content={pageDescription} />
+  <meta name="generator" content={Astro.generator} />
+  <link rel="icon" href={faviconUrl} />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content={pageTitle} />
+  <meta property="og:description" content={pageDescription} />
+  <meta property="og:type" content={pageType} />
+  {ogImage && <meta property="og:image" content={ogImage} />}
+  {canonicalURL && <link rel="canonical" href={canonicalURL} />}
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={pageTitle} />
+  <meta name="twitter:description" content={pageDescription} />
+  {ogImage && <meta name="twitter:image" content={ogImage} />}
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title={siteTitle} href="/rss.xml" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/styles/global.css" />
+
+</head>
+<body style={'--color-accent:' + accentColor + '; --color-accent-hover:' + accentColor}>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="site-brand">
+        <a href="/">
+          <div class="site-name">{settings.site_title}</div>
+          {settings.site_tagline && (
+            <div class="site-tagline-header">{settings.site_tagline}</div>
+          )}
+        </a>
+      </div>
+
+      <button class="mobile-menu-toggle" aria-label="Toggle menu" onclick="document.querySelector('.site-nav').classList.toggle('open')">
+        &#9776;
+      </button>
+
+      <nav class="site-nav">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/blog/">Posts</a>
+        {nav.show_about && (
+          <a class="nav-link" href="/about/">About</a>
+        )}
+        {nav.show_contact && (
+          <a class="nav-link" href="/contact/">Contact</a>
+        )}
+        {nav.show_tags && (
+          <a class="nav-link" href="/tags/">Tags</a>
+        )}
+        {customLinks.map((link) => (
+          <a
+            class="nav-link"
+            href={link.url}
+            target={link.new_tab ? '_blank' : '_self'}
+            rel={link.new_tab ? 'noopener noreferrer' : ''}
+          >{link.text}</a>
+        ))}
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <slot />
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      {settings.show_social_footer && settings.social_links && settings.social_links.length > 0 && (
+        <div class="footer-social">
+          {settings.social_links.map((link) => (
+            <a href={link.url} target="_blank" rel="noopener noreferrer">{link.platform}</a>
+          ))}
+        </div>
+      )}
+      <div class="footer-copy">
+        {settings.footer_text
+          ? settings.footer_text
+          : settings.site_title + '. All rights reserved.'}
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

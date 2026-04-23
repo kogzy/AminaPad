@@ -1,0 +1,166 @@
+---
+import fs from 'node:fs';
+import yaml from 'js-yaml';
+import Base from '../../layouts/Base.astro';
+
+const settings = yaml.load(fs.readFileSync('src/content/settings.yaml', 'utf8'));
+
+export async function getStaticPaths() {
+  const postFiles = import.meta.glob('../../content/blog/*.md', { eager: true });
+
+  function getSlugFromPath(filePath) {
+    var parts = filePath.split('/');
+    var fileName = parts[parts.length - 1];
+    return fileName.replace('.md', '');
+  }
+
+  function getReadingTime(content) {
+    var words = content ? content.split(/\s+/).length : 0;
+    var minutes = Math.ceil(words / 200);
+    return minutes + ' min read';
+  }
+
+  var allPosts = [];
+  for (var path of Object.keys(postFiles)) {
+    var mod = postFiles[path];
+    if (mod.frontmatter && !mod.frontmatter.draft && !mod.frontmatter.archived) {
+      allPosts.push({
+        frontmatter: mod.frontmatter,
+        slug: getSlugFromPath(path),
+        readingTime: getReadingTime(mod.rawContent ? mod.rawContent() : ''),
+        Content: mod.Content,
+      });
+    }
+  }
+
+  allPosts.sort(function(a, b) {
+    return new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime();
+  });
+
+  return allPosts.map(function(post, index) {
+    var prevPost = index < allPosts.length - 1 ? allPosts[index + 1] : null;
+    var nextPost = index > 0 ? allPosts[index - 1] : null;
+    return {
+      params: { slug: post.slug },
+      props: {
+        post: post,
+        prevPost: prevPost ? { title: prevPost.frontmatter.title, slug: prevPost.slug } : null,
+        nextPost: nextPost ? { title: nextPost.frontmatter.title, slug: nextPost.slug } : null,
+      },
+    };
+  });
+}
+
+const { post, prevPost, nextPost } = Astro.props;
+const fm = post.frontmatter;
+const PostContent = post.Content;
+
+var seoTitle = fm.seo_title || fm.title;
+var seoDesc = fm.seo_description || fm.description;
+var ogImg = fm.og_image || fm.featured_image || '';
+
+function formatDate(dateStr) {
+  var d = new Date(dateStr);
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+var articleSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": fm.title,
+  "description": fm.description,
+  "datePublished": fm.date,
+  "author": {
+    "@type": "Person",
+    "name": settings.author_name
+  },
+  "image": ogImg || undefined,
+  "keywords": fm.tags ? fm.tags.join(', ') : undefined
+});
+var showReadingTime = settings.show_reading_time !== false;
+---
+<Base
+  title={seoTitle}
+  description={seoDesc}
+  ogImage={ogImg}
+  pageType="article"
+>
+  <article class="post-single">
+    <header class="post-header">
+      <h1>{fm.title}</h1>
+      <div class="post-meta">
+        <span>{settings.author_name}</span>
+        <span class="meta-dot">&middot;</span>
+        <time datetime={fm.date}>{formatDate(fm.date)}</time>
+        {showReadingTime && (
+          <span class="meta-dot">&middot;</span>
+        )}
+        {showReadingTime && (
+          <span>{post.readingTime}</span>
+        )}
+      </div>
+    </header>
+
+    {fm.featured_image && (
+      <img
+        class="post-featured-image"
+        src={fm.featured_image}
+        alt={fm.featured_image_alt || fm.title}
+      />
+    )}
+
+    <div class="post-body">
+      <PostContent />
+    </div>
+
+    <footer class="post-footer">
+      {fm.tags && fm.tags.length > 0 && (
+        <div class="post-tags-footer">
+          <span class="post-tags-label">Tags:</span>
+          {fm.tags.map((tag) => (
+            <a class="tag" href={'/tags/' + tag.toLowerCase() + '/'}>{tag}</a>
+          ))}
+        </div>
+      )}
+
+      {settings.show_author_block !== false && settings.author_name && (
+        <div class="author-card">
+          {settings.author_photo && (
+            <img class="author-photo" src={settings.author_photo} alt={settings.author_name} />
+          )}
+          <div class="author-info">
+            <h3>{settings.author_name}</h3>
+            {settings.author_bio && <p>{settings.author_bio}</p>}
+          </div>
+        </div>
+      )}
+
+      <nav class="post-nav">
+        {prevPost ? (
+          <a href={'/blog/' + prevPost.slug + '/'}>
+            <span class="nav-label">Previous</span>
+            {prevPost.title}
+          </a>
+        ) : (
+          <span></span>
+        )}
+        {nextPost ? (
+          <a href={'/blog/' + nextPost.slug + '/'}>
+            <span class="nav-label">Next</span>
+            {nextPost.title}
+          </a>
+        ) : (
+          <span></span>
+        )}
+      </nav>
+    </footer>
+  </article>
+
+  <!-- Structured Data -->
+  <script is:inline define:vars={{ articleSchema }}>
+    var s = document.createElement('script');
+    s.type = 'application/ld+json';
+    s.textContent = articleSchema;
+    document.head.appendChild(s);
+  </script>
+</Base>
