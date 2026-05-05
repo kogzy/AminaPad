@@ -1,6 +1,8 @@
 # AminaPad
 
-A free, whitelabel blog template built with **Astro 5**, **Pages CMS**, and **Cloudflare Pages**. Made for writers who want a beautiful blog without the complexity. Every piece of text, branding, and content is editable through a browser-based admin panel. No code editing required.
+A free, whitelabel blog template made for writers who want a beautiful blog without the complexity. Every piece of text, branding, and content is editable through a browser-based admin panel. No code editing required.
+
+Read more about AminaPad, watch the tutorial video, and more at [aminapad.kogzy.com](https://aminapad.kogzy.com/?utm_source=github&utm_medium=readme&utm_campaign=aminard).
 
 ---
 
@@ -16,7 +18,8 @@ A free, whitelabel blog template built with **Astro 5**, **Pages CMS**, and **Cl
 - **SEO controls** - Custom title, description, and social share image per post and page
 - **Author profile** - Name, bio, photo, social links, all editable
 - **Site branding** - Site title, tagline, accent color, dark/light mode, custom favicon
-- **Display toggles** - Reading time, author block, homepage image, social links placement
+- **Display toggles** - Reading time, post dates, author block, homepage image, social links placement
+- **Custom head code** - Paste in Google Analytics, Google AdSense, affiliate network pixels, tracking codes, and other third-party tools directly from the CMS
 - **Reading time** - Auto-calculated for every post
 - **RSS feed** at `/rss.xml` and **XML sitemap** at `/sitemap.xml`
 - **Structured data** - JSON-LD article schema for Google
@@ -27,6 +30,8 @@ A free, whitelabel blog template built with **Astro 5**, **Pages CMS**, and **Cl
 ---
 
 ## Setup
+
+Watch the step-by-step walkthrough and setup video at [aminapad.kogzy.com](https://aminapad.kogzy.com/?utm_source=github&utm_medium=readme&utm_campaign=aminard).
 
 You need a **GitHub account** and a **Cloudflare account**. No code editing required.
 
@@ -77,38 +82,6 @@ Your content and configuration are untouched. After replacing the template files
 
 ---
 
-## Project Structure
-
-```
-.pages.yml                - CMS configuration (field definitions)
-astro.config.mjs
-package.json
-public/
-  images/uploads/         - CMS image uploads
-  styles/global.css       - Stylesheet
-  favicon.png             - Default favicon
-  robots.txt
-src/
-  content/
-    blog/                 - Blog posts (markdown)
-    pages/                - About, Contact content
-    navigation.yaml       - Nav toggles
-    settings.yaml         - All site and author settings
-  layouts/
-    Base.astro
-  pages/
-    index.astro           - Homepage
-    about.astro
-    contact.astro
-    404.astro
-    rss.xml.js
-    sitemap.xml.js
-    blog/
-    tags/
-```
-
----
-
 ## Customization
 
 - **Accent color** - Edit in the CMS under Site Settings
@@ -116,11 +89,3 @@ src/
 - **Favicon** - Upload a custom favicon in the CMS, or replace `public/favicon.png`
 - **Fonts** - Edit `src/layouts/Base.astro` (Google Fonts link) and `public/styles/global.css`
 - **Layout and design** - All styling is in `public/styles/global.css`
-
----
-
-## Technical Notes
-
-- **Node.js v22 LTS required** - Node 24+ causes Astro render errors
-- **Astro 5** - Do not downgrade to Astro 4
-- **`.pages.yml` must live at the repo root** - Pages CMS reads it from there

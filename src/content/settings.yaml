@@ -1,6 +1,6 @@
-site_title: "AminaPad"
-site_tagline: "Words, stories, and whatever I feel like sharing"
-site_description: "A personal blog by Amina. Poems, stories, recipes, and everything in between."
+site_title: "My Blog"
+site_tagline: "Welcome to my blog"
+site_description: "A personal blog."
 accent_color: "#c0392b"
 dark_mode: false
 favicon: ""
@@ -12,14 +12,12 @@ show_reading_time: false
 show_date: true
 show_author_block: true
 posts_per_page: 8
-author_name: "Amina"
-author_bio: "Welcome to my corner of the internet where I share."
+author_name: "Your Name"
+author_bio: ""
 author_photo: ""
 social_links:
-  - platform: "Wikipedia"
-    url: "https://en.wikipedia.org/wiki/Main_Page"
-  - platform: "AO3"
-    url: "https://archiveofourown.org/"
-footer_text: "AminaPad"
+  - platform: "AminaPad"
+    url: "https://aminapad.kogzy.com/?utm_source=aminapad&utm_medium=social&utm_campaign=aminasl"
+footer_text: ""
 custom_head_code: ""
 site_url: ""
