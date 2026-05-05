@@ -44,6 +44,7 @@ var showReadingTime = settings.show_reading_time !== false;
 var homepageImage = settings.homepage_image || settings.author_photo || '';
 var showHomepageImage = settings.show_homepage_image && homepageImage;
 var showSocialHomepage = settings.show_social_homepage && settings.social_links && settings.social_links.length > 0;
+var showDate = settings.show_date !== false;
 
 function formatDate(dateStr) {
   var d = new Date(dateStr);
@@ -85,8 +86,12 @@ function formatDate(dateStr) {
             <div class="post-card-body">
               <div class="post-card-meta">
                 <span class="featured-badge">Featured</span>
-                <span class="meta-dot">&middot;</span>
-                <time>{formatDate(post.frontmatter.date)}</time>
+                {(showDate || showReadingTime) && (
+                  <span class="meta-dot">&middot;</span>
+                )}
+                {showDate && (
+                  <time>{formatDate(post.frontmatter.date)}</time>
+                )}
                 {showReadingTime && (
                   <span class="meta-dot">&middot;</span>
                 )}
@@ -126,8 +131,10 @@ function formatDate(dateStr) {
             )}
             <div class="post-card-body">
               <div class="post-card-meta">
-                <time>{formatDate(post.frontmatter.date)}</time>
-                {showReadingTime && (
+                {showDate && (
+                  <time>{formatDate(post.frontmatter.date)}</time>
+                )}
+                {showDate && showReadingTime && (
                   <span class="meta-dot">&middot;</span>
                 )}
                 {showReadingTime && (

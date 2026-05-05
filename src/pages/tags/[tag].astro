@@ -57,6 +57,7 @@ function formatDate(dateStr) {
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 var showReadingTime = settings.show_reading_time !== false;
+var showDate = settings.show_date !== false;
 ---
 <Base title={'Posts tagged "' + tagName + '"'} description={'All posts tagged with ' + tagName}>
   <div class="page-single" style="max-width: var(--max-width);">
@@ -78,8 +79,10 @@ var showReadingTime = settings.show_reading_time !== false;
           )}
           <div class="post-card-body">
             <div class="post-card-meta">
-              <time>{formatDate(post.frontmatter.date)}</time>
-              {showReadingTime && (
+              {showDate && (
+                <time>{formatDate(post.frontmatter.date)}</time>
+              )}
+              {showDate && showReadingTime && (
                 <span class="meta-dot">&middot;</span>
               )}
               {showReadingTime && (

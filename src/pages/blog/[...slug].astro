@@ -78,6 +78,7 @@ var articleSchema = JSON.stringify({
   "keywords": fm.tags ? fm.tags.join(', ') : undefined
 });
 var showReadingTime = settings.show_reading_time !== false;
+var showDate = settings.show_date !== false;
 ---
 <Base
   title={seoTitle}
@@ -90,8 +91,12 @@ var showReadingTime = settings.show_reading_time !== false;
       <h1>{fm.title}</h1>
       <div class="post-meta">
         <span>{settings.author_name}</span>
-        <span class="meta-dot">&middot;</span>
-        <time datetime={fm.date}>{formatDate(fm.date)}</time>
+        {showDate && (
+          <span class="meta-dot">&middot;</span>
+        )}
+        {showDate && (
+          <time datetime={fm.date}>{formatDate(fm.date)}</time>
+        )}
         {showReadingTime && (
           <span class="meta-dot">&middot;</span>
         )}

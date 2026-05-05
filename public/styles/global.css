@@ -677,6 +677,21 @@ a.tag:hover {
   color: var(--color-text-muted);
 }
 
+.footer-attribution {
+  margin-top: var(--spacing-xs);
+}
+
+.footer-attribution a {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  opacity: 0.6;
+  transition: opacity var(--transition);
+}
+
+.footer-attribution a:hover {
+  opacity: 1;
+}
+
 /* --- 404 --- */
 .not-found {
   text-align: center;

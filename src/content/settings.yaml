@@ -9,6 +9,7 @@ homepage_image: ""
 show_social_homepage: true
 show_social_footer: false
 show_reading_time: false
+show_date: true
 show_author_block: true
 posts_per_page: 8
 author_name: "Amina"
@@ -20,4 +21,5 @@ social_links:
   - platform: "AO3"
     url: "https://archiveofourown.org/"
 footer_text: "AminaPad"
+custom_head_code: ""
 site_url: ""

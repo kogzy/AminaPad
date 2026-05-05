@@ -58,6 +58,10 @@ const customLinks = nav.custom_links || [];
   <!-- Styles -->
   <link rel="stylesheet" href="/styles/global.css" />
 
+  {settings.custom_head_code && (
+    <Fragment set:html={settings.custom_head_code} />
+  )}
+
 </head>
 <body style={'--color-accent:' + accentColor + '; --color-accent-hover:' + accentColor}>
   <header class="site-header">
@@ -116,6 +120,9 @@ const customLinks = nav.custom_links || [];
         {settings.footer_text
           ? settings.footer_text
           : settings.site_title + '. All rights reserved.'}
+      </div>
+      <div class="footer-attribution">
+        <a href="https://aminapad.kogzy.com/?utm_source=aminapad&utm_medium=footer&utm_campaign=aminaft" target="_blank" rel="noopener noreferrer">AminaPad by Kogzy</a>
       </div>
     </div>
   </footer>
