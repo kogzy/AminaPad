@@ -11,7 +11,6 @@ draft: false
 archived: false
 seo_title: ""
 seo_description: ""
-og_image: ""
 ---
 
 Welcome to your AminaPad blog. Everything below is managed from your CMS at app.pagescms.org. Once you've read through this, toggle the **Archived** switch on this post to hide it from your site.

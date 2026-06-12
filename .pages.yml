@@ -175,6 +175,11 @@ content:
         label: Title
         type: string
         required: true
+      - name: seo_title
+        label: SEO Title
+        type: string
+        required: false
+        description: Custom title for search engines (leave blank to use the post title).
       - name: date
         label: Publish Date
         type: date
@@ -185,11 +190,16 @@ content:
         label: Description / Excerpt
         type: text
         description: A short summary shown in post previews and search results (1-2 sentences).
+      - name: seo_description
+        label: SEO Description
+        type: text
+        required: false
+        description: Custom description for search engines (leave blank to use the excerpt).
       - name: featured_image
         label: Featured Image
         type: image
         required: false
-        description: The main image for this post - shown at the top and in previews.
+        description: The main image for this post - shown at the top, in previews, and when shared on social media.
       - name: featured_image_alt
         label: Featured Image Alt Text
         type: string
@@ -212,21 +222,6 @@ content:
         label: Archived
         type: boolean
         description: Archived posts are hidden from all listings but remain in your repo.
-      - name: seo_title
-        label: SEO Title
-        type: string
-        required: false
-        description: Custom title for search engines (leave blank to use the post title).
-      - name: seo_description
-        label: SEO Description
-        type: text
-        required: false
-        description: Custom description for search engines (leave blank to use the excerpt).
-      - name: og_image
-        label: Social Share Image
-        type: image
-        required: false
-        description: Custom image for social media shares (leave blank to use the featured image).
       - name: body
         label: Body
         type: rich-text
